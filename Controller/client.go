@@ -64,7 +64,7 @@ func GetList(c *gin.Context) {
 	from := strconv.Itoa(currentPage2 * pageSize2)
 	data := DataClothes{}
 	db := Database.DBConn()
-	db.Where("deleted_at is null AND category_id=? AND name LIKE ?", categoryId, "%"+search+"%").Order(orderBy + " desc").Limit(pageSize).Offset(from).Find(&data.Data)
+	db.Where("category_id=? AND name LIKE ?", categoryId, "%"+search+"%").Order(orderBy + " desc").Limit(pageSize).Offset(from).Find(&data.Data)
 	count := 0
 	db.Model(&DTO.Clothes{}).Count(&count)
 	data.TotalCount = count
@@ -98,10 +98,32 @@ func CreateClothes(c *gin.Context) {
 /* Get all category  */
 func GetAllCategory(c *gin.Context) {
 	db := Database.DBConn()
-	category := []DTO.Clothes{}
+	category := []DTO.Category{}
 	db.Find(&category)
 	c.JSON(200, category)
 	defer db.Close()
 }
 
-/*----------------------------- */
+/*----------- create list image clothes ---------------- */
+func CreateImageClothes(c *gin.Context) {
+	db := Database.DBConn()
+	var json DTO.Image
+	err := c.BindJSON(&json)
+	if err == nil {
+		db.Create(&json)
+		c.JSON(200, gin.H{
+			"messages": "inserted",
+		})
+		return
+	}
+	c.JSON(500, gin.H{"error": err.Error()})
+	defer db.Close()
+}
+func GetImageByClotheId(c *gin.Context) {
+	clotheId := c.Param("clotheId")
+	db := Database.DBConn()
+	image := []DTO.Image{}
+	db.Where("clothe_id=?", clotheId).Find(&image)
+	c.JSON(200, image)
+	defer db.Close()
+}

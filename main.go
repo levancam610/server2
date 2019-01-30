@@ -22,8 +22,9 @@ func createDatabase() {
 		fmt.Println(err)
 	}
 	defer db.Close()
-	db.DropTableIfExists(&DTO.Clothes{}, &DTO.Category{}, &DTO.Image{})
-	db.AutoMigrate(&DTO.Clothes{}, &DTO.Category{}, &DTO.Image{})
+	//db.DropTableIfExists(&DTO.Clothes{}, &DTO.Category{}, &DTO.Image{})
+	db.DropTableIfExists(&DTO.Image{})
+	db.AutoMigrate(&DTO.Image{})
 
 }
 
@@ -48,10 +49,9 @@ func setupRouter() *gin.Engine {
 		client.GET("/clothes/:clotheId", Controller.FindClotheById)
 
 		client.DELETE("/clothes/delete/:clotheId", Controller.DeleteClothes)
-		/*client.POST("/clothes/uploadImage", controller.UploadImage)
-		client.GET("/clothes/image/:id", controller.GetImageByClothesId)
-		client.DELETE("/clothes/image/delete/:id", controller.DeleteClothes)
-		client.GET("/clothes/countPage", controller.CountPageClothes)
+		client.POST("/clothes/uploadImage", Controller.CreateImageClothes)
+		client.GET("/clothesImage/:clotheId", Controller.GetImageByClotheId)
+		/*client.GET("/clothes/countPage", controller.CountPageClothes)
 		client.POST("/login", controller.Login)
 		client.GET("/logout", controller.Logout)
 		client.GET("/getSession", controller.GetSession)*/

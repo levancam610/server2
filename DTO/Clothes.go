@@ -24,8 +24,8 @@ type Category struct {
 
 type Image struct {
 	gorm.Model
-	Link       string `gorm:"type:varchar(255)”`
-	CategoryId int    `gorm:"type:int(10)"`
+	Link     string `gorm:"type:varchar(255)”`
+	ClotheId int    `gorm:"type:int(10)"`
 }
 
 var db *gorm.DB
