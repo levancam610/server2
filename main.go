@@ -35,7 +35,7 @@ func setupRouter() *gin.Engine {
 	config.AllowAllOrigins = true
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"http://localhost:3005", "http://localhost:3000"},
-		AllowMethods: []string{"POST", "GET"},
+		AllowMethods: []string{"POST", "GET", "DELETE"},
 		AllowHeaders: []string{"Origin", "Content-Type"},
 		/*	ExposeHeaders:    []string{"Content-Length"},*/
 	}))
@@ -43,12 +43,12 @@ func setupRouter() *gin.Engine {
 	client := router.Group("/api")
 	{
 		client.GET("/clothesList", Controller.GetList)
-		//client.POST("/clothes/create", Controller.CreateClothes)
+		client.POST("/clothes/create", Controller.CreateClothes)
 		client.GET("/category", Controller.GetAllCategory)
-		/*client.GET("/clothesList", controller.GetList2)
+		client.GET("/clothes/:clotheId", Controller.FindClotheById)
 
-		client.DELETE("/clothes/delete/:id", controller.DeleteClothes)
-		client.POST("/clothes/uploadImage", controller.UploadImage)
+		client.DELETE("/clothes/delete/:clotheId", Controller.DeleteClothes)
+		/*client.POST("/clothes/uploadImage", controller.UploadImage)
 		client.GET("/clothes/image/:id", controller.GetImageByClothesId)
 		client.DELETE("/clothes/image/delete/:id", controller.DeleteClothes)
 		client.GET("/clothes/countPage", controller.CountPageClothes)
@@ -62,5 +62,5 @@ func setupRouter() *gin.Engine {
 func main() {
 	//createDatabase()
 	router := setupRouter()
-	router.Run(":8000") // Ứng dụng chạy tại cổng 8080
+	router.Run(":8080") // Ứng dụng chạy tại cổng 8080
 }
