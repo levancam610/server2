@@ -14,8 +14,16 @@ type Clothes struct {
 	Price      int    `gorm:"size:10"`
 	Type       int    `gorm:"size:5"`
 	Image      string `gorm:"type:varchar(255)”`
+	NameCate   string
 }
 
+/*----*/
+type ClothesCategory struct {
+	Clothes Clothes
+	Name    string
+}
+
+/*----*/
 type Category struct {
 	gorm.Model
 	Name string
@@ -24,6 +32,7 @@ type Category struct {
 
 type Image struct {
 	gorm.Model
+	Name     string `gorm:"type:varchar(100)”`
 	Link     string `gorm:"type:varchar(255)”`
 	ClotheId int    `gorm:"type:int(10)"`
 }

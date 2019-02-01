@@ -24,10 +24,14 @@ type Clothes struct {
 	Amount     int
 	Price      int
 }
+type Clothes2 struct {
+	Name string
+	Id   int
+}
 type DataClothes struct {
 	TotalPage  int
 	TotalCount int
-	Data       []DTO.Clothes
+	Data       []DTO.ClothesCategory
 }
 
 func FindClotheById(c *gin.Context) {
@@ -51,9 +55,9 @@ func DeleteClothes(c *gin.Context) {
 func GetList(c *gin.Context) {
 	currentPage := c.Query("currentPage")
 	pageSize := c.Query("pageSize")
-	orderBy := c.Query("orderBy")
-	search := c.Query("search")
-	categoryId := c.Query("categoryId")
+	//orderBy := c.Query("orderBy")
+	//search := c.Query("search")
+	//categoryId := c.Query("categoryId")
 
 	currentPage2, err1 := strconv.Atoi(currentPage)
 	currentPage2 -= 1
@@ -61,10 +65,17 @@ func GetList(c *gin.Context) {
 	if err1 != nil || err2 != nil {
 		panic("loi page ko convert dc integer")
 	}
-	from := strconv.Itoa(currentPage2 * pageSize2)
+	//from := strconv.Itoa(currentPage2 * pageSize2)
 	data := DataClothes{}
+	//result := []Clothes2{}
 	db := Database.DBConn()
-	db.Where("category_id=? AND name LIKE ?", categoryId, "%"+search+"%").Order(orderBy + " desc").Limit(pageSize).Offset(from).Find(&data.Data)
+	db.Table("clothes").Select("clothes.id,clothes.name, clothes.category_id, clothes.gender , clothes.created_at, clothes.updated_at, clothes.deleted_at, clothes.image , clothes.amount , clothes.price, categories.name").Joins("left outer join categories on categories.id  = clothes.category_id").Find(&data.Data)
+	/* Where("category_id=? AND name LIKE ?", categoryId, "%"+search+"%").Order(orderBy + " desc").Limit(pageSize).Offset(from). */
+	//db.Where("category_id=? AND name LIKE ?", categoryId, "%"+search+"%").Order(orderBy + " desc").Limit(pageSize).Offset(from).Find(&data.Data)
+	//db.Joins("left join categories on caregories.id  = clothes.category_id").Where("category_id=? AND name LIKE ?", categoryId, "%"+search+"%").Order(orderBy + " desc").Limit(pageSize).Offset(from).Find(&data.Data)
+	//db.Table("clothes").Select("clothes.name, categories.name").Joins("left join categories on caregories.id  = clothes.category_id").Where("category_id=? AND name LIKE ?", categoryId, "%"+search+"%").Order(orderBy + " desc").Limit(pageSize).Offset(from).Scan(&result)
+	//asdasd
+
 	count := 0
 	db.Model(&DTO.Clothes{}).Count(&count)
 	data.TotalCount = count
@@ -74,7 +85,7 @@ func GetList(c *gin.Context) {
 		count = count/pageSize2 + 1
 	}
 	data.TotalPage = count
-	c.JSON(200, data)
+	c.JSON(200, data.Data)
 
 	defer db.Close()
 
